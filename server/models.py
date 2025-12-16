@@ -12,6 +12,17 @@ class Exercise(db.Model):
     #relationships
     workouts = db.relationship('WorkoutExercise', back_populates='exercise', lazy=True)
 
+    #validations
+    @validates('name', 'category')
+    def validate_strings(self, key, value):
+        if not value or not isinstance(value, str):
+            raise ValueError(f"{key} must be a non-empty string")
+        return value
+    @validates('equipment_needed')
+    def validate_equipment_needed(self, key, value):
+        if not isinstance(value, bool):
+            raise ValueError(f"{key} must be a boolean")
+        return value
 
 
 class Workout(db.Model):
@@ -23,6 +34,18 @@ class Workout(db.Model):
 
     #relationships
     exercises = db.relationship('WorkoutExercise', back_populates='workout', lazy=True)
+
+    #validations
+    @validates('date')
+    def validate_date(self, key, value):
+        if not value:
+            raise ValueError(f"{key} must be a valid date")
+        return value
+    @validates('duration_minutes')
+    def validate_duration(self, key, value):
+        if not isinstance(value, int) or value <= 0:
+            raise ValueError(f"{key} must be a positive integer")
+        return value
 
 
 class WorkoutExercise(db.Model):
@@ -38,4 +61,9 @@ class WorkoutExercise(db.Model):
     workout = db.relationship('Workout', back_populates='exercises', lazy=True)
     exercise = db.relationship('Exercise', back_populates='workouts', lazy=True)
 
-   
+    #validations
+    @validates('sets', 'reps')
+    def validate_positive_integers(self, key, value):
+        if not isinstance(value, int) or value <= 0:
+            raise ValueError(f"{key} must be a positive integer")
+        return value

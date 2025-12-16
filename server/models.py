@@ -9,6 +9,9 @@ class Exercise(db.Model):
     category = db.Column(db.String, nullable=False)
     equipment_needed = db.Column(db.Boolean, default=False)
 
+    #relationships
+    workouts = db.relationship('WorkoutExercise', back_populates='exercise', lazy=True)
+
 
 
 class Workout(db.Model):
@@ -17,6 +20,9 @@ class Workout(db.Model):
     date = db.Column(db.Date, nullable=False)
     duration_minutes = db.Column(db.Integer, nullable=False)
     notes = db.Column(db.String)
+
+    #relationships
+    exercises = db.relationship('WorkoutExercise', back_populates='workout', lazy=True)
 
 
 class WorkoutExercise(db.Model):
@@ -27,5 +33,9 @@ class WorkoutExercise(db.Model):
     sets = db.Column(db.Integer, nullable=False)
     reps = db.Column(db.Integer, nullable=False)
     duration_seconds = db.Column(db.Integer)
+
+    #relationships
+    workout = db.relationship('Workout', back_populates='exercises', lazy=True)
+    exercise = db.relationship('Exercise', back_populates='workouts', lazy=True)
 
    

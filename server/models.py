@@ -12,6 +12,9 @@ class Exercise(db.Model):
     #relationships
     workouts = db.relationship('WorkoutExercise', back_populates='exercise', lazy=True)
 
+    def __repr__(self):
+        return f"<Exercise {self.name} - Category: {self.category} - Equipment Needed: {self.equipment_needed}>"
+
     #validations
     @validates('name', 'category')
     def validate_strings(self, key, value):
@@ -34,6 +37,9 @@ class Workout(db.Model):
 
     #relationships
     exercises = db.relationship('WorkoutExercise', back_populates='workout', lazy=True)
+
+    def __repr__(self):
+        return f"<Workout on {self.date} - Duration: {self.duration_minutes} minutes>"
 
     #validations
     @validates('date')
@@ -60,6 +66,9 @@ class WorkoutExercise(db.Model):
     #relationships
     workout = db.relationship('Workout', back_populates='exercises', lazy=True)
     exercise = db.relationship('Exercise', back_populates='workouts', lazy=True)
+
+    def __repr__(self):
+        return f"<WorkoutExercise: {self.id} Workout ID: {self.workout_id} - Exercise ID: {self.exercise_id} - Sets: {self.sets} - Reps: {self.reps} - Duration: {self.duration_seconds} seconds>"
 
     #validations
     @validates('sets', 'reps')

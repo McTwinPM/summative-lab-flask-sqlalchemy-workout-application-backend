@@ -4,6 +4,15 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
+flask = "*"
+faker = "*"
+flask-sqlalchemy = "*"
+flask-migrate = "*"
+werkzeug = "*"
+importlib-metadata = "*"
+importlib-resources = "*"
+ipdb = "*"
+marshmallow = "*"
 
 [dev-packages]
 

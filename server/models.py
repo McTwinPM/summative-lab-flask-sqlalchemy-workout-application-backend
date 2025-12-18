@@ -36,6 +36,17 @@ class ExerciseSchema(Schema):
 
     workouts = fields.Nested(lambda: WorkoutExerciseSchema,exclude=("exercise",), many=True)
 
+    @validates('name')
+    def validate_strings(self, value):
+        if not value or not isinstance(value, str):
+            raise ValueError("Must be a non-empty string")
+        return value
+    @validates('equipment_needed')
+    def validate_equipment_needed(self, value):
+        if not isinstance(value, bool):
+            raise ValueError("Must be a boolean")
+        return value
+
 class Workout(db.Model):
     __tablename__ = 'workouts'
     id = db.Column(db.Integer, primary_key=True)
@@ -68,6 +79,12 @@ class WorkoutSchema(Schema):
     notes = fields.Str()
 
     exercises = fields.Nested(lambda: WorkoutExerciseSchema, exclude=("workout",), many=True)
+
+    @validates('duration_minutes')
+    def validate_duration(self, value):
+        if not isinstance(value, int) or value <= 0:
+            raise ValueError("duration_minutes must be a positive integer")
+        return value
 
 class WorkoutExercise(db.Model):
     __tablename__ = 'workout_exercises'
@@ -102,3 +119,9 @@ class WorkoutExerciseSchema(Schema):
 
     workout = fields.Nested(WorkoutSchema, exclude=("exercises",))
     exercise = fields.Nested(ExerciseSchema, exclude=("workouts",))
+
+    @validates('sets', 'reps')
+    def validate_positive_integers(self, value):
+        if not isinstance(value, int) or value <= 0:
+            raise ValueError("Must be a positive integer")
+        return value

@@ -1,5 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import validates
+from marshmallow import Schema, fields
 db = SQLAlchemy()
 
 class Exercise(db.Model):
@@ -27,6 +28,13 @@ class Exercise(db.Model):
             raise ValueError(f"{key} must be a boolean")
         return value
 
+class ExerciseSchema(Schema):
+    id = fields.Int(dump_only=True)
+    name = fields.Str(required=True)
+    category = fields.Str(required=True)
+    equipment_needed = fields.Bool()
+
+    workouts = fields.Nested(lambda: WorkoutExerciseSchema,exclude=("exercise",), many=True)
 
 class Workout(db.Model):
     __tablename__ = 'workouts'
@@ -53,6 +61,13 @@ class Workout(db.Model):
             raise ValueError(f"{key} must be a positive integer")
         return value
 
+class WorkoutSchema(Schema):
+    id = fields.Int(dump_only=True)
+    date = fields.Date(required=True)
+    duration_minutes = fields.Int(required=True)
+    notes = fields.Str()
+
+    exercises = fields.Nested(lambda: WorkoutExerciseSchema, exclude=("workout",), many=True)
 
 class WorkoutExercise(db.Model):
     __tablename__ = 'workout_exercises'
@@ -76,3 +91,14 @@ class WorkoutExercise(db.Model):
         if not isinstance(value, int) or value <= 0:
             raise ValueError(f"{key} must be a positive integer")
         return value
+
+class WorkoutExerciseSchema(Schema):
+    id = fields.Int(dump_only=True)
+    workout_id = fields.Int(required=True)
+    exercise_id = fields.Int(required=True)
+    sets = fields.Int(required=True)
+    reps = fields.Int(required=True)
+    duration_seconds = fields.Int()
+
+    workout = fields.Nested(WorkoutSchema, exclude=("exercises",))
+    exercise = fields.Nested(ExerciseSchema, exclude=("workouts",))

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 from app import app
-from models import *
+from server.models import *
 from random import choice, randint
 from faker import Faker
 import os

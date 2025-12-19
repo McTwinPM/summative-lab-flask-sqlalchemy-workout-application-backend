@@ -1,6 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.orm import validates
-from marshmallow import Schema, fields
+from sqlalchemy.orm import validates 
+from marshmallow import Schema, fields, ValidationError
 db = SQLAlchemy()
 
 class Exercise(db.Model):
@@ -36,15 +36,15 @@ class ExerciseSchema(Schema):
 
     workouts = fields.Nested(lambda: WorkoutExerciseSchema,exclude=("exercise",), many=True)
 
-    @validates('name')
+    @validates('name', 'category')
     def validate_strings(self, value):
         if not value or not isinstance(value, str):
-            raise ValueError("Must be a non-empty string")
+            raise ValidationError("Must be a non-empty string")
         return value
     @validates('equipment_needed')
     def validate_equipment_needed(self, value):
         if not isinstance(value, bool):
-            raise ValueError("Must be a boolean")
+            raise ValidationError("Must be a boolean")
         return value
 
 class Workout(db.Model):
@@ -83,7 +83,7 @@ class WorkoutSchema(Schema):
     @validates('duration_minutes')
     def validate_duration(self, value):
         if not isinstance(value, int) or value <= 0:
-            raise ValueError("duration_minutes must be a positive integer")
+            raise ValidationError("duration_minutes must be a positive integer")
         return value
 
 class WorkoutExercise(db.Model):
@@ -123,5 +123,5 @@ class WorkoutExerciseSchema(Schema):
     @validates('sets', 'reps')
     def validate_positive_integers(self, value):
         if not isinstance(value, int) or value <= 0:
-            raise ValueError("Must be a positive integer")
+            raise ValidationError("Must be a positive integer")
         return value

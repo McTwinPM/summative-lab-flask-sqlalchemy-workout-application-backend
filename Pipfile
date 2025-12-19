@@ -13,6 +13,7 @@ importlib-metadata = "*"
 importlib-resources = "*"
 ipdb = "*"
 marshmallow = "*"
+pytest = "*"
 
 [dev-packages]
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 from app import app
-from server.models import *
+from models import *
 from random import choice, randint
 from faker import Faker
 import os
@@ -15,24 +15,13 @@ with app.app_context():
 
     # Create all tables
     db.create_all()
-
     faker = Faker()
-    
+
+    # Clear existing data
     Exercise.query.delete()
     Workout.query.delete()
     WorkoutExercise.query.delete()
     
-    #add exercises using faker
-    # categories = ['Cardio', 'Strength', 'Flexibility', 'Balance']
-    # exercise_names = ['push-up', 'squat', 'plank', 'jumping jacks', 'burpees', 'lunges', 'sit-ups', 'mountain climbers', 'high knees', 'tricep dips']
-    # exercises = []
-    # for e in range(20):
-    #     exercise = Exercise(
-    #         name = choice(exercise_names).capitalize(),
-    #         category = choice(categories),
-    #         equipment_needed = choice([True, False])
-    #     )
-    #     exercises.append(exercise)
     
     #add exerceses manually
     exercises = [
